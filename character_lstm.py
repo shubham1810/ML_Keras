@@ -1,3 +1,6 @@
+# This file has been copied from the examples of keras library for deep
+# learning built on top of Theanos
+
 from __future__ import print_function
 from keras.models import Sequential
 from keras.layers.core import Dense, Activation, Dropout
