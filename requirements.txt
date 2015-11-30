@@ -1,3 +1,6 @@
 numpy
+scipy
 Theanos
 keras
+Cython
+h5py
