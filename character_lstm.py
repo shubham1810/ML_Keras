@@ -8,10 +8,11 @@ import random
 import sys
 
 
-def save_as_json(model_to_save):
+def save_model(model_to_save):
     f = open("model_file.json", "w")
     f.write(model_to_save.to_json())
     f.close()
+    model_to_save.save_weights("my_model_weights.h5")
 
 
 path = get_file('nietzsche.txt', origin="https://s3.amazonaws.com/text-datasets/nietzsche.txt")
@@ -53,9 +54,7 @@ model.add(Activation('softmax'))
 
 model.compile(loss='categorical_crossentropy', optimizer='rmsprop')
 # model.compile(loss='categorical_crossentropy', optimizer='adadelta')
-save_as_json(model)
-print("saving")
-exit()
+
 
 def sample(a, temperature=1.0):
     # helper function to sample an index from a probability array
@@ -65,6 +64,7 @@ def sample(a, temperature=1.0):
 
 # train the model, output generated text after each iteration
 for iteration in range(1, 60):
+    save_model(model)
     print()
     print('-' * 50)
     print('Iteration', iteration)
@@ -97,3 +97,4 @@ for iteration in range(1, 60):
             sys.stdout.write(next_char)
             sys.stdout.flush()
         print()
+save_model(model)
