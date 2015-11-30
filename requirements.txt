@@ -1,6 +1,10 @@
 numpy
+<<<<<<< HEAD
 scipy
 Theanos
+=======
+Theano
+>>>>>>> 79ed2a352b4997b7bfb1681bd4442df2677d1af2
 keras
 Cython
 h5py
