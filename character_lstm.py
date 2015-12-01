@@ -2,7 +2,7 @@
 # learning built on top of Theanos
 
 from __future__ import print_function
-from keras.models import Sequential
+from keras.models import Sequential, model_from_json
 from keras.layers.core import Dense, Activation, Dropout
 from keras.layers.recurrent import LSTM
 from keras.datasets.data_utils import get_file
@@ -10,6 +10,17 @@ import numpy as np
 import random
 import sys
 import os
+
+
+def load_if_available():
+    try:
+        print("Trying to load model data")
+        model = model_from_json(open("model_file.json").read())
+        model.load_weights("my_model_weights.h5")
+        return model
+    except:
+        print("Failed to load weights...")
+        return None
 
 
 def save_model(model_to_save):
@@ -60,15 +71,18 @@ for i, sentence in enumerate(sentences):
 
 # build the model: 2 stacked LSTM
 print('Build model...')
-model = Sequential()
-model.add(LSTM(512, return_sequences=True, input_shape=(maxlen, len(chars))))
-model.add(Dropout(0.2))
-model.add(LSTM(512, return_sequences=False))
-model.add(Dropout(0.2))
-model.add(Dense(len(chars)))
-model.add(Activation('softmax'))
 
-model.compile(loss='categorical_crossentropy', optimizer='rmsprop')
+model = load_if_available()
+
+if model is None:
+    model = Sequential()
+    model.add(LSTM(512, return_sequences=True, input_shape=(maxlen, len(chars))))
+    model.add(Dropout(0.2))
+    model.add(LSTM(512, return_sequences=False))
+    model.add(Dropout(0.2))
+    model.add(Dense(len(chars)))
+    model.add(Activation('softmax'))
+    model.compile(loss='categorical_crossentropy', optimizer='rmsprop')
 # model.compile(loss='categorical_crossentropy', optimizer='adadelta')
 
 
