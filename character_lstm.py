@@ -9,13 +9,26 @@ from keras.datasets.data_utils import get_file
 import numpy as np
 import random
 import sys
+import os
 
 
 def save_model(model_to_save):
-    f = open("model_file.json", "w")
-    f.write(model_to_save.to_json())
-    f.close()
-    model_to_save.save_weights("my_model_weights.h5")
+    try:
+        f = open("model_file.json", "w")
+        f.write(model_to_save.to_json())
+        f.close()
+    except:
+        print("Couldn't write to model file")
+
+    try:
+        os.remove("my_model_weights.h5")
+    except:
+        print("Couldn't remove model weights")
+
+    try:
+        model_to_save.save_weights("my_model_weights.h5")
+    except:
+        print("Can't save the model weights")
 
 
 path = get_file('nietzsche.txt', origin="https://s3.amazonaws.com/text-datasets/nietzsche.txt")
