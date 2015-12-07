@@ -1,8 +1,2 @@
 *.pyc
-<<<<<<< HEAD
-
-=======
-*.h5
-*.out
-model_file.json
->>>>>>> 2d60e41fcd07fa452245976cc2dc96b1909bda95
+.idea/*
