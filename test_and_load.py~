@@ -1,0 +1,57 @@
+from __future__ import print_function
+from keras.models import Sequential, model_from_json
+from keras.layers.core import Dense, Activation, Dropout
+from keras.layers.recurrent import LSTM
+from keras.datasets.data_utils import get_file
+import numpy as np
+import random
+import sys
+import os
+
+def load_if_available():
+    try:
+        print("Trying to load model data")
+        model = model_from_json(open("model_file.json").read())
+        model.load_weights("my_model_weights.h5")
+        return model
+    except:
+        print("Failed to load weights...")
+        return None
+
+path = get_file('nietzsche.txt', origin="https://s3.amazonaws.com/text-datasets/nietzsche.txt")
+text = open(path).read().lower()
+print('corpus length:', len(text))
+
+chars = set(text)
+print('total chars:', len(chars))
+char_indices = dict((c, i) for i, c in enumerate(chars))
+indices_char = dict((i, c) for i, c in enumerate(chars))
+
+# cut the text in semi-redundant sequences of maxlen characters
+maxlen = 20
+step = 3
+sentences = []
+next_chars = []
+for i in range(0, len(text) - maxlen, step):
+    sentences.append(text[i: i + maxlen])
+    next_chars.append(text[i + maxlen])
+print('nb sequences:', len(sentences))
+
+print('Vectorization...')
+X = np.zeros((len(sentences), maxlen, len(chars)), dtype=np.bool)
+y = np.zeros((len(sentences), len(chars)), dtype=np.bool)
+for i, sentence in enumerate(sentences):
+    for t, char in enumerate(sentence):
+        X[i, t, char_indices[char]] = 1
+    y[i, char_indices[next_chars[i]]] = 1
+
+# build the model: 2 stacked LSTM
+print('Build model...')
+
+model = load_if_available()
+
+def sample(a, temperature=1.0):
+    # helper function to sample an index from a probability array
+    a = np.log(a) / temperature
+    a = np.exp(a) / np.sum(np.exp(a))
+    return np.argmax(np.random.multinomial(1, a, 1))
