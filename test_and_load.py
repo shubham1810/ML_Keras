@@ -61,20 +61,20 @@ def sample(a, temperature=1.0):
     return np.argmax(np.random.multinomial(1, a, 1))
 
 
-def run_main():
+def run_main(speech=0, diversity_values=[0.2, 0.5, 1.0]):
     start_index = random.randint(0, len(text) - maxlen - 1)
     print('Enter a string:')
     inp = raw_input()
 
     if len(inp) < maxlen:
         val = inp + text[start_index: start_index + maxlen - len(inp)]
-        inp = val
+        inp = val.lower()
     if len(inp) > maxlen:
-        inp = inp[:maxlen]
+        inp = inp[:maxlen].lower()
 
     print('You entered: ' + inp)
 
-    for diversity in [0.2, 0.5, 1.0, 1.2]:
+    for diversity in diversity_values:
         speak_sentence = ''
         print()
         print('----- diversity:', diversity)
@@ -97,7 +97,8 @@ def run_main():
             speak_sentence += next_char
             sys.stdout.flush()
         print()
-        os.system('say '+speak_sentence)
+        if speech == 1:
+            os.system('say '+speak_sentence)
 
 
 
